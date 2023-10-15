@@ -4,10 +4,11 @@ import com.scarlet.util.log
 import com.scarlet.util.onCompletion
 import kotlinx.coroutines.*
 
-object Canceling_Parent_Cancels_All_Children {
+object Canceling_Scope_Cancels_All_Children_Regardless_Of_Job_Types {
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking {
+        coroutineContext.job.onCompletion("runBlocking")
 
         // What if change to Job()
         val scope = CoroutineScope(SupervisorJob())
@@ -29,7 +30,8 @@ object Canceling_Parent_Cancels_All_Children {
         scope.cancel()
         joinAll(child1, child2)
 
-        log("is Parent scope cancelled? = ${TODO()}")
+//        log("is Parent scope cancelled? = ${TODO()}")
+        log("is Parent job cancelled? = ${scope.coroutineContext.job.isCancelled}")
     }
 }
 
@@ -66,6 +68,7 @@ object SupervisorJob_Child_Failure_SimpleDemo {
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking {
+        coroutineContext.job.onCompletion("runBlocking")
 
         // What if change to Job()
         val scope = CoroutineScope(SupervisorJob())

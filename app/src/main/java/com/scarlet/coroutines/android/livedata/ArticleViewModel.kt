@@ -1,10 +1,8 @@
-package com.scarlet.coroutines.testing.livedata
+package com.scarlet.coroutines.android.livedata
 
 import androidx.lifecycle.*
-import com.scarlet.coroutines.android.livedata.ApiService
 import com.scarlet.model.Article
 import com.scarlet.util.Resource
-import com.scarlet.util.log
 import kotlinx.coroutines.*
 
 class ArticleViewModel(
@@ -19,9 +17,9 @@ class ArticleViewModel(
 
     init {
         viewModelScope.launch {
-            log("viewModelScope.launch")
+//            log("viewModelScope.launch")
             _articles.value = apiService.getArticles()
-            log("_articles.value = apiService.getArticles()")
+//            log("_articles.value = apiService.getArticles()")
         }
     }
 
@@ -64,6 +62,6 @@ class ArticleViewModel(
             }
 
     companion object {
-        const val FETCH_INTERVAL = 30_000L
+        const val FETCH_INTERVAL = 5_000L
     }
 }

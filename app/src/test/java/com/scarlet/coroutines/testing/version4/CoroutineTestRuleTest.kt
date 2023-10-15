@@ -2,8 +2,8 @@ package com.scarlet.coroutines.testing.version4
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth
+import com.scarlet.coroutines.android.livedata.ApiService
 import com.scarlet.coroutines.testing.CoroutineTestRule
-import com.scarlet.coroutines.testing.ApiService
 import com.scarlet.model.Article
 import com.scarlet.util.Resource
 import com.scarlet.util.getValueForTest

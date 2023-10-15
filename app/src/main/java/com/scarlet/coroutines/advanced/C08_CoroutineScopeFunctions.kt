@@ -1,5 +1,6 @@
 package com.scarlet.coroutines.advanced
 
+import com.scarlet.util.completeStatus
 import com.scarlet.util.coroutineInfo
 import com.scarlet.util.log
 import com.scarlet.util.onCompletion
@@ -110,24 +111,29 @@ object coroutineScope_Demo3 {
     }
 }
 
+/**/
+
+data class Details(val name: String, val followers: Int)
+data class Tweet(val text: String)
+
+class ApiException(val code: Int, message: String) : Throwable(message)
+
+private suspend fun getFollowersNumber(): Int {
+    delay(100)
+    throw ApiException(500, "Service unavailable")
+}
+
+private suspend fun getUserName(): String {
+    delay(500)
+    return "paula abdul"
+}
+
+private suspend fun getTweets(): List<Tweet> {
+    delay(500)
+    return listOf(Tweet("Hello, world"))
+}
+
 object Not_What_We_Want {
-    data class Details(val name: String, val followers: Int)
-    data class Tweet(val text: String)
-
-    private suspend fun getFollowersNumber(): Int {
-        delay(100)
-        throw Error("Service exception")
-    }
-
-    private suspend fun getUserName(): String {
-        delay(500)
-        return "Paula Abdul"
-    }
-
-    private suspend fun getTweets(): List<Tweet> {
-        delay(500)
-        return listOf(Tweet("Hello, world"))
-    }
 
     private suspend fun getUserDetails(scope: CoroutineScope): Details {
         val userName = scope.async { getUserName() }
@@ -140,7 +146,8 @@ object Not_What_We_Want {
     fun main(args: Array<String>) = runBlocking {
         val details = try {
             getUserDetails(this)
-        } catch (e: Error) {
+        } catch (e: ApiException) {
+            log("Error: ${e.code}")
             null
         }
         log("User: $details")
@@ -151,25 +158,6 @@ object Not_What_We_Want {
 }
 
 object What_We_Want {
-    data class Details(val name: String, val followers: Int)
-    data class Tweet(val text: String)
-
-    class ApiException(val code: Int, message: String) : Throwable(message)
-
-    private suspend fun getFollowersNumber(): Int {
-        delay(100)
-        throw ApiException(500, "Service unavailable")
-    }
-
-    private suspend fun getUserName(): String {
-        delay(500)
-        return "paula abdul"
-    }
-
-    private suspend fun getTweets(): List<Tweet> {
-        delay(500)
-        return listOf(Tweet("Hello, world"))
-    }
 
     private suspend fun getUserDetails(): Details = coroutineScope {
         val userName = async { getUserName() }
@@ -249,6 +237,7 @@ object MainSafety_Demo {
     @JvmStatic
     fun main(args: Array<String>) = runBlocking {
         launch(CoroutineName("parent") + Dispatchers.Swing) {
+            log(coroutineContext)
             log("fib(40) = ${fibonacci(40)}")
         }.join()
     }
@@ -256,7 +245,7 @@ object MainSafety_Demo {
 
 object Timeout {
     @JvmStatic
-    fun main(args: Array<String>) = runBlocking<Unit>{
+    fun main(args: Array<String>) = runBlocking<Unit> {
         launch {
             launch { // cancelled by its parent
                 delay(2_000)

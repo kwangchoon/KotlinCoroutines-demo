@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.scarlet.coroutines.testing.ApiService
+import com.scarlet.coroutines.android.livedata.ApiService
 import com.scarlet.model.Article
 import com.scarlet.util.Resource
 import kotlinx.coroutines.*
@@ -15,7 +15,7 @@ class ArticleViewModel(
 
     private val _articles = MutableLiveData<Resource<List<Article>>>()
     val articles: LiveData<Resource<List<Article>>>
-        get () = _articles
+        get() = _articles
 
     fun onButtonClicked() {
         _articles.value = Resource.Loading

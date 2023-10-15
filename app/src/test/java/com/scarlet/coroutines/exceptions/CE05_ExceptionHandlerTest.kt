@@ -7,6 +7,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.lang.RuntimeException
+import kotlin.time.Duration.Companion.seconds
 
 @ExperimentalCoroutinesApi
 class ExceptionHandlerTest {
@@ -16,33 +17,38 @@ class ExceptionHandlerTest {
     }
 
     /**
-     * Coroutine Exception Handler
+     * Coroutine Exception Handlers installed at scope
      */
 
     @Test
-    fun `CEH at the scope`() = runTest {
+    fun `CEH at the scope`() = runTest(timeout = 20_000.seconds) {
         val scope = CoroutineScope(Job() + ehandler)
 
-        val parent = scope.launch {
-            launch {
+        scope.launch {
+            val child1 = launch {
                 delay(10_000)
                 throw RuntimeException("oops")
             }.onCompletion("child1")
 
-            launch {
+            val child2 = launch {
                 delay(20_000)
             }.onCompletion("child2")
-        }.onCompletion("parent")
 
-        parent.join()
+//            joinAll(child1, child2) // what's the difference?
+        }.onCompletion("parent").join()
+
         scope.completeStatus("scope") // Is scope cancelled?
     }
 
+    /**
+     * Coroutine Exception Handlers installed at root coroutines
+     */
+
     @Test
     fun `CEH at the root coroutine - child of scope`() = runTest {
-        val scope = CoroutineScope(SupervisorJob())
+        val scope = CoroutineScope(Job())
 
-        val parent = scope.launch(ehandler) {
+        scope.launch(ehandler) {
             launch {
                 delay(100)
                 throw RuntimeException("oops")
@@ -51,9 +57,8 @@ class ExceptionHandlerTest {
             launch {
                 delay(200)
             }.onCompletion("child2")
-        }.onCompletion("parent")
+        }.onCompletion("parent").join()
 
-        parent.join()
         scope.completeStatus("scope") // Is scope cancelled?
     }
 
@@ -75,6 +80,10 @@ class ExceptionHandlerTest {
         }
     }
 
+    /**
+     * CEHs installed neither at the scope nor at root coroutines do not take effect.
+     */
+
     @Test(expected = RuntimeException::class)
     fun `CEH not at the root coroutine - child of coroutineScope`() = runTest {
         coroutineScope {
@@ -91,11 +100,11 @@ class ExceptionHandlerTest {
         }
     }
 
-    @Test
+    @Test(expected = RuntimeException::class)
     fun `CEH not at the root coroutine - not a direct child of scope`() = runTest {
         val scope = CoroutineScope(Job())
 
-        val parent = scope.launch {
+        scope.launch {
             launch(ehandler) {
                 delay(100)
                 throw RuntimeException("oops")
@@ -104,9 +113,8 @@ class ExceptionHandlerTest {
             launch {
                 delay(200)
             }.onCompletion("child2")
-        }.onCompletion("parent")
+        }.onCompletion("parent").join()
 
-        parent.join()
         scope.completeStatus("scope") // Is scope cancelled?
     }
 }

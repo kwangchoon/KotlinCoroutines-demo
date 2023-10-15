@@ -44,7 +44,7 @@ class CvtToSuspendingFunctionTest {
             slot.captured.onResponse(mockCall, mockResponse)
         }
 
-        val target = Callback_2
+        val target = UsingCallback_Demo2
 
         // Act (When)
         target.searchRecipes("eggs", mockApi, object : RecipeCallback<List<Recipe>> {
@@ -70,7 +70,7 @@ class CvtToSuspendingFunctionTest {
             slot.captured.onResponse(mockCall, mockResponse)
         }
 
-        val target = CvtToSuspendingFunction_2
+        val target = CvtToSuspendingFunction_Demo2
 
         // Act (When)
         val response = target.searchRecipes("eggs", mockApi, TODO())
@@ -93,7 +93,7 @@ class CvtToSuspendingFunctionTest {
             }, 1, TimeUnit.SECONDS)
         }
 
-        val target = CvtToSuspendingFunction_2
+        val target = CvtToSuspendingFunction_Demo2
 
         // Act (When)
         val job = launch {

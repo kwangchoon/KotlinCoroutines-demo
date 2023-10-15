@@ -1,4 +1,4 @@
-package com.scarlet.coroutines.testing
+package com.scarlet.coroutines.android.livedata
 
 import androidx.lifecycle.LiveData
 import com.scarlet.model.Article

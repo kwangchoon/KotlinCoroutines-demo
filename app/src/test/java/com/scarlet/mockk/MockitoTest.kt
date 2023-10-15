@@ -115,7 +115,8 @@ class MockitoTest {
         }
 
         // Chain multiple calls
-        whenever(mockedFile.readText()).thenReturn("read 1").thenReturn("read 2").thenReturn("read 3")
+        whenever(mockedFile.readText()).thenReturn("read 1").thenReturn("read 2")
+            .thenReturn("read 3")
 
         // Shorthand
         whenever(mockedFile.readText()).thenReturn("read 1", "read 2", "read 3")
@@ -226,6 +227,9 @@ class MockitoTest {
         whenever(
             mockedCar.drive(eq(1000), argThat { engine -> engine.dieselEngine })
         ).thenReturn(1500)
+
+        assertThat(mockedCar.drive(1000, Engine(true))).isEqualTo(1500)
+        assertThat(mockedCar.drive(1000, Engine(false))).isEqualTo(0)
     }
 
     /**

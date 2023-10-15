@@ -23,11 +23,13 @@ object Cancel_Parent_Scope {
         val parent = scope.launch {
             child = launch {
                 delay(1_000)
+                log("child is done")
             }.onCompletion("child")
         }.onCompletion("parent")
 
-        delay(500)
+        delay(100)
 
+        // precarious !@#$
         scope.cancel() // What should we do to wait for all the children to be completed in cancelled state?
 
         log("parent cancelled = ${parent.isCancelled}")
@@ -50,7 +52,7 @@ object Cancel_Parent_Coroutine {
                 launch { delay(1_000) }.onCompletion("child2")
         }.onCompletion("parentJob")
 
-        delay(500)
+        delay(200)
 
         parentJob.cancelAndJoin()
 
@@ -75,7 +77,7 @@ object Cancel_Child_Coroutine {
                 launch { delay(1_000) }.onCompletion("child2")
         }.onCompletion("parentJob")
 
-        delay(500)
+        delay(200)
 
         child1?.cancel()
         parentJob.join()
@@ -102,11 +104,13 @@ object Cancel_Parent_Job_Quiz {
             delay(1_000)
         }.onCompletion("child")
 
-        delay(500)
+        delay(100)
 
         // How to cancel the child via its parent?
         // job.cancel() or scope.cancel() ?
         child.join()
+
+        delay(500)
 
         log("child cancelled = ${child.isCancelled}")
         scope.completeStatus("scope")
@@ -125,7 +129,7 @@ object Cancel_Children_Only_To_Reuse_Parent_Job {
             child2 = launch { delay(1_000) }.onCompletion("child2")
         }.onCompletion("parentJob")
 
-        delay(500)
+        delay(200)
 
         parentJob.cancelChildren()
         parentJob.join()
@@ -149,7 +153,7 @@ object Cancel_Children_Only_To_Reuse_Scope {
             child2 = launch { delay(1_000) }.onCompletion("child2")
         }.onCompletion("parentJob")
 
-        delay(500)
+        delay(200)
 
         scope.coroutineContext.job.cancelChildren()
         parentJob.join()

@@ -7,12 +7,9 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.coroutines.ContinuationInterceptor
 import kotlin.system.measureTimeMillis
 
 @ExperimentalCoroutinesApi

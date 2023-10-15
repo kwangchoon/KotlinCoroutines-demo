@@ -27,13 +27,13 @@ class LaunchEHTest {
         throw RuntimeException("oops")
     }
 
-    @Test
+    @Test(expected = RuntimeException::class)
     fun `exception thrown`() {
         failingFunction()
     }
 
     // `runBlocking` and `runTest` rethrows uncaught exception.
-    @Test
+    @Test(expected = RuntimeException::class)
     fun `exception with runBlocking or runTest`() = runTest {
         failingFunction()
     }
@@ -44,7 +44,7 @@ class LaunchEHTest {
         onCompletion("runBlocking")
 
         launch {
-            delay(10)
+            delay(50)
             throw RuntimeException("yellow")
         }
         launch {
@@ -58,11 +58,11 @@ class LaunchEHTest {
     fun `multiple exceptions - runTest`() = runTest {
         onCompletion("runBlocking")
 
-        val job1 = launch {
-            delay(10)
+        launch {
+            delay(50)
             throw RuntimeException("yellow")
         }
-        val job2 = launch {
+        launch {
             delay(10)
             throw IOException("mellow")
         }
@@ -79,8 +79,8 @@ class LaunchEHTest {
         }
     }
 
-    @Test
-    fun `Non-root coroutine - cannot handle propagated exception on site using try-catch`() =
+    @Test(expected = RuntimeException::class)
+    fun `Nested coroutine - cannot handle propagated exception on site using try-catch`() =
         runTest {
             try {
                 launch {
@@ -94,7 +94,7 @@ class LaunchEHTest {
     @Test
     fun `Failure of child cancels the parent and its siblings`() = runTest {
         onCompletion("runBlocking")
-        val scope = CoroutineScope(Job()).onCompletion("scope")
+        val scope = CoroutineScope(SupervisorJob()).onCompletion("scope")
 
         val parentJob = scope.launch {
             launch {
@@ -108,6 +108,8 @@ class LaunchEHTest {
         }.onCompletion("parentJob")
 
         parentJob.join()
+
+        log("is Parent scope cancelled? = ${scope.coroutineContext.job.isCancelled}")
     }
 
 }

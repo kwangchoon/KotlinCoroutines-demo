@@ -1,11 +1,9 @@
 package com.scarlet.util
 
-import androidx.test.core.app.ActivityScenario.launch
 import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.ContinuationInterceptor
-import kotlin.coroutines.coroutineContext
 
 val log: Logger = LoggerFactory.getLogger("Coroutines")
 
@@ -56,12 +54,6 @@ fun CoroutineScope.onCompletion(name: String): CoroutineScope = apply {
 fun Job.onCompletion(name: String, level: Int = 0): Job = apply {
     invokeOnCompletion {
         log("${spaces(level)}$name: isCancelled = $isCancelled, exception = ${it?.javaClass?.name}")
-    }
-}
-
-fun Job.onCompletion2(name: String, where: MutableList<String>, level: Int = 0): Job = apply {
-    invokeOnCompletion {
-        where.add("${spaces(level)}$name: isCancelled = $isCancelled, exception = ${it?.javaClass?.name}")
     }
 }
 

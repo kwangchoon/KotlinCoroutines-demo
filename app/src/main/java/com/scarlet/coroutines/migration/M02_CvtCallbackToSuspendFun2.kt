@@ -24,7 +24,7 @@ interface RecipeCallback<T> {
     fun onError(response: Resource<T>)
 }
 
-object Callback_2 {
+object UsingCallback_Demo2 {
 
     fun searchRecipes(
         query: String, api: RecipeApi, callback: RecipeCallback<List<Recipe>>
@@ -44,10 +44,9 @@ object Callback_2 {
             }
         })
     }
-
 }
 
-object CvtToSuspendingFunction_2 {
+object CvtToSuspendingFunction_Demo2 {
 
     fun searchRecipes(
         query: String, api: RecipeApi, callback: RecipeCallback<List<Recipe>>

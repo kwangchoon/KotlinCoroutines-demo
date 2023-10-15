@@ -86,68 +86,69 @@ class VirtualTimeControlTest {
     }
 
     @Test
-    fun `virtual time control - UnconfinedCoroutineDispatcher - eager`() = runTest(UnconfinedTestDispatcher()) {
-        var state = 0
+    fun `virtual time control - UnconfinedCoroutineDispatcher - eager`() =
+        runTest(UnconfinedTestDispatcher()) {
+            var state = 0
 
-        launch {
-            state = 1
-            delay(1_000)
-            state = 2
-        }
-
-        assertThat(state).isEqualTo(TODO())
-        log("$currentTime")
-    }
-
-    @Test
-    fun `test virtual time control - runBlockingTest`() = runBlockingTest {
-        var count = 0
-
-        launch {
-            log("child start")
-            delay(1_000)
-            count = 1
-            delay(1_000)
-            count = 3
-            delay(1_000)
-            count = 5
-            log("child end")
-        }
-
-        assertThat(count).isEqualTo(0)
-        log("$currentTime")
-
-        advanceTimeBy(1_000)
-        log("$currentTime")
-        assertThat(count).isEqualTo(1)
-
-        advanceTimeBy(1_000)
-        log("$currentTime")
-        assertThat(count).isEqualTo(3)
-
-        advanceTimeBy(999) // 999
-        log("$currentTime")
-        assertThat(count).isEqualTo(3)
-    }
-
-    @Test
-    fun `paused and resume dispatcher - realistic example - runBlockingTest`() = runBlockingTest {
-
-        pauseDispatcher()
-        val list = mutableListOf<Int>().apply {
-            add(42)
             launch {
-                log(Thread.currentThread().name)
-                add(777)
+                state = 1
+                delay(1_000)
+                state = 2
             }
+
+            assertThat(state).isEqualTo(TODO())
+            log("$currentTime")
         }
 
-        assertThat(list).containsExactly(42)
+//    @Test
+//    fun `test virtual time control - runBlockingTest`() = runBlockingTest {
+//        var count = 0
+//
+//        launch {
+//            log("child start")
+//            delay(1_000)
+//            count = 1
+//            delay(1_000)
+//            count = 3
+//            delay(1_000)
+//            count = 5
+//            log("child end")
+//        }
+//
+//        assertThat(count).isEqualTo(0)
+//        log("$currentTime")
+//
+//        advanceTimeBy(1_000)
+//        log("$currentTime")
+//        assertThat(count).isEqualTo(1)
+//
+//        advanceTimeBy(1_000)
+//        log("$currentTime")
+//        assertThat(count).isEqualTo(3)
+//
+//        advanceTimeBy(999) // 999
+//        log("$currentTime")
+//        assertThat(count).isEqualTo(3)
+//    }
 
-        resumeDispatcher()
-
-        assertThat(list).containsExactly(42, 777)
-    }
+//    @Test
+//    fun `paused and resume dispatcher - realistic example - runBlockingTest`() = runBlockingTest {
+//
+//        pauseDispatcher()
+//        val list = mutableListOf<Int>().apply {
+//            add(42)
+//            launch {
+//                log(Thread.currentThread().name)
+//                add(777)
+//            }
+//        }
+//
+//        assertThat(list).containsExactly(42)
+//
+//        resumeDispatcher()
+//
+//        assertThat(list).containsExactly(42, 777)
+//    }
 
     @Test
     fun `paused and resume dispatcher - realistic example`() = runTest {

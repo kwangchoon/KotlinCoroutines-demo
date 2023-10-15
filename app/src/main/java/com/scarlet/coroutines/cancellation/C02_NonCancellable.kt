@@ -31,7 +31,7 @@ object Try_Launch_Or_Call_Suspending_Function_in_Canceling_State {
                 launch { // will be ignored because of immediate cancellation
                     log("Will not be printed")
                     delay(50)
-                }.onCompletion("Jombi")//.join() will throw cancellation exception and skip the rest
+                }.onCompletion("Jombi")//.join() // will throw cancellation exception and skip the rest
 
                 // Try to call suspending function will throw cancellation exception
                 try {

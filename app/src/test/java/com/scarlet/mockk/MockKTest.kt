@@ -48,7 +48,7 @@ class MockKTest {
      * catch methods that are being called when you do not expect it, or when
      * methods are being called with different arguments.
      */
-    @Test//(expected = MockKException::class)
+    @Test(expected = MockKException::class)
     fun `MockK - mock creation`() {
         val mockedPath = mockk<Path>()
 
@@ -64,10 +64,10 @@ class MockKTest {
         val mockedPath = mockk<Path>(/*relaxed = true*/)
 
         val fileName = mockedPath.fileName()
-        println(fileName)
+        assertThat(fileName).isEmpty()
     }
 
-    @Test//(expected = MockKException::class)
+    @Test
     fun `MockK - lenient mock creation, only for Unit return fun`() {
         val mockedPath = mockk<Path>(/*relaxUnitFun = true*/)
 
@@ -117,6 +117,7 @@ class MockKTest {
             println("called with an argument: " + call.invocation.args[0])
         }
 
+        mockedPath.writeText("hello")
     }
 
     @Test
@@ -163,12 +164,10 @@ class MockKTest {
 
     @Test
     fun `request many times()`() {
-        // Arrange (Given)
         val mockedPath = mockk<Path>()
 
         every { mockedPath.readText() } returns "hello" andThen "mellow"
 
-        // Act (When)
         println(mockedPath.readText())
         println(mockedPath.readText())
         println(mockedPath.readText())
@@ -180,7 +179,7 @@ class MockKTest {
      * `eq` and `anyXXX`
      *
      * When creating a stub or verifying a call, Mockito provides many different
-     * argument matchers. Besides `eq`, the most commonly used are the `any` family:
+     * "argument matchers". Besides `eq`, the most commonly used are the `any` family:
      * `any`, `anyBoolean`, `anyByte`, `anyChar`, `anyDouble`, `anyFloat`, `anyInt`, `anyLong`,
      * `anyObject`, `anyShort`, and `anyString`.
      *
@@ -232,16 +231,16 @@ class MockKTest {
         mockedPath.writeText("olleh")
         verify(inverse = true) { mockedPath.writeText("hello") }
 
-//        mockedPath.readText()
-//        mockedPath.readText()
-//        mockedPath.readText()
-//        verify(atLeast = 3) { mockedPath.readText() }
-//        verify(atMost = 3) { mockedPath.readText() }
-//        verify(exactly = 3) { mockedPath.readText() }
-//
-//        mockedPath.writeText("hello")
-//        verify(atLeast = 1) { mockedPath.writeText("hello") }
-//        verify(atMost = 1) { mockedPath.writeText("hello") }
+        mockedPath.readText()
+        mockedPath.readText()
+        mockedPath.readText()
+        verify(atLeast = 3) { mockedPath.readText() }
+        verify(atMost = 3) { mockedPath.readText() }
+        verify(exactly = 3) { mockedPath.readText() }
+
+        mockedPath.writeText("hello")
+        verify(atLeast = 1) { mockedPath.writeText("hello") }
+        verify(atMost = 1) { mockedPath.writeText("hello") }
     }
 
     @Test
@@ -271,14 +270,14 @@ class MockKTest {
 
         mockFour.readText()
 
-//        verify { mockFour.readText() }
+        verify { mockFour.readText() }
         confirmVerified(mockFour /*, mockFive */)
     }
 
     @Test
     fun `Mockito - inOrder verification`() {
         // A. Single mock whose methods must be invoked in a particular order
-        val singleMock = mockk<MutableList<String>>(/*relaxUnitFun = true*/) {
+        val singleMock = mockk<MutableList<String>> {
             every { add("was added first") } returns true
             every { add("was added second") } returns true
             every { add("was added third") } returns true
@@ -324,11 +323,14 @@ class MockKTest {
      */
     @Test
     fun `MockK - match`() {
-        val mockedCar = mockk<Car>()
+        val mockedCar = mockk<Car>(relaxed = true)
 
         every {
             mockedCar.drive(1000, match { it.dieselEngine })
         } returns 1500
+
+        assertThat(mockedCar.drive(1000, Engine(true))).isEqualTo(1500)
+        assertThat(mockedCar.drive(1000, Engine(false))).isEqualTo(0)
     }
 
     /**
@@ -399,7 +401,6 @@ class MockKTest {
             personSlots.map { it.name }
         ).isEqualTo(listOf("Sarah Jane", "Peter Parker"))
     }
-
 
 
     /**

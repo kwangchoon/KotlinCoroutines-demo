@@ -72,6 +72,7 @@ object Cleanup_When_Cancelled {
         }
 
         // TODO: cleanup
+        log("job: I'm cancelled")
         cleanUp()
     }
 

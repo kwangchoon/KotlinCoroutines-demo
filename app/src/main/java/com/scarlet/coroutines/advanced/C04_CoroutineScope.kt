@@ -137,7 +137,7 @@ object GlobalScope_Cancellation_Demo3 {
 //            delay(700)
         }.onCompletion("Parent")
 
-        val job2 = GlobalScope.launch(CoroutineName("Parent 2")) {
+        GlobalScope.launch(CoroutineName("Parent 2")) {
 //            launch(CoroutineName("Child3")) { delay(1_000)}.onCompletion("Child 3")
             delay(700)
         }.onCompletion("Parent 2")

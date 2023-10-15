@@ -10,7 +10,7 @@ private interface AsyncCallback {
     fun onError(ex: Exception)
 }
 
-object Callback_1 {
+object UsingCallback_Demo1 {
 
     // Method using callback to simulate a long running task
     private fun getData(callback: AsyncCallback, status: Boolean = true) {
@@ -46,7 +46,7 @@ object Callback_1 {
     }
 }
 
-object CvtToSuspendingFunction_1 {
+object CvtToSuspendingFunction_Demo1 {
 
     // Use resume/resumeWithException or resumeWith only
     private suspend fun getData(status: Boolean = true): String = TODO()
@@ -67,4 +67,3 @@ object CvtToSuspendingFunction_1 {
         }
     }
 }
-

@@ -80,17 +80,21 @@ class CoroutineScopeBuilderTest {
         val scope = CoroutineScope(Job())
 
         val parentJob = scope.launch {
-            coroutineScope {
-                onCompletion("coroutineScope")
+            try {
+                coroutineScope {
+                    onCompletion("coroutineScope")
 
-                launch {
-                    delay(500)
-                    throw RuntimeException("oops")
-                }.onCompletion("child1")
+                    launch {
+                        delay(500)
+                        throw RuntimeException("oops")
+                    }.onCompletion("child1")
 
-                launch {
-                    delay(1_000)
-                }.onCompletion("child2")
+                    launch {
+                        delay(1_000)
+                    }.onCompletion("child2")
+                }
+            } catch (ex: Exception) {
+                log("Caught: $ex")
             }
         }.onCompletion("parentJob")
 

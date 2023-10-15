@@ -87,7 +87,6 @@ class CancellationTest {
             }
 
             log("Coroutine keep running ... isActive = ${(coroutineContext.isActive)}")
-
             networkRequestUncooperative() // this will not be skipped
         }.onCompletion("job")
 
@@ -110,6 +109,7 @@ class CancellationTest {
 
             log("All subsequent computations will be skipped ...")
             networkRequestUncooperative() // long running computation
+            log("This will not be printed")
 
         }.onCompletion("job")
 

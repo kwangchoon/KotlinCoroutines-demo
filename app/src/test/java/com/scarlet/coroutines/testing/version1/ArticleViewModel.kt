@@ -1,7 +1,7 @@
 package com.scarlet.coroutines.testing.version1
 
 import androidx.lifecycle.*
-import com.scarlet.coroutines.testing.ApiService
+import com.scarlet.coroutines.android.livedata.ApiService
 import com.scarlet.model.Article
 import com.scarlet.util.Resource
 import kotlinx.coroutines.*
