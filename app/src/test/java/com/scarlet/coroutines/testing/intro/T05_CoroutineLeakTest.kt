@@ -2,9 +2,7 @@ package com.scarlet.coroutines.testing.intro
 
 import com.google.common.truth.Truth.assertThat
 import com.scarlet.util.log
-import com.scarlet.util.onCompletion
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -20,7 +18,7 @@ class Subject {
 
         launch {
             repeat(10) { count ->
-                delay(timeMillis = 1_000)
+                delay(1_000)
                 log("loop is running -- $count")
             }
             log("all done")
@@ -31,7 +29,6 @@ class Subject {
 @ExperimentalCoroutinesApi
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class CoroutineLeakTest {
-
     private val scope = CoroutineScope(Dispatchers.Default)
 
     private val subject = Subject()
@@ -47,7 +44,6 @@ class CoroutineLeakTest {
         log("after my leaky test")
     }
 
-    // runBlocking, runBlockingTest, no test dispatcher all the same
     @Test
     fun `create a leak`() = runTest {
 

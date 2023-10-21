@@ -46,7 +46,7 @@ class CoroutineTestRuleTest {
     }
 
     @Test
-    fun `runBlockingTest - test fun creating new coroutines`() = runTest {
+    fun `test fun creating new coroutines`() = runTest {
         // Given
         viewModel = ArticleViewModel(apiService /* TODO */)
 

@@ -14,33 +14,45 @@ class ArticleViewModel(
     /**
      * Style 1
      */
-    private val _articles = MutableLiveData<Resource<List<Article>>>()
-    val articles: LiveData<Resource<List<Article>>> = _articles
-
-    init {
-        viewModelScope.launch {
-            log("viewModelScope.launch")
-            _articles.value = apiService.getArticles()
-            log("_articles.value = apiService.getArticles()")
-        }
-    }
+//    private val _articles = MutableLiveData<Resource<List<Article>>>()
+//    val articles: LiveData<Resource<List<Article>>> = _articles
+//
+//    init {
+//        viewModelScope.launch {
+//            log("viewModelScope.launch")
+//            _articles.value = apiService.getArticles()
+//            log("_articles.value = ${_articles.value}")
+//        }
+//    }
 
     /**
-     * Style 2
+     * Style 2: Use MutableLiveData and apply
      */
 //    val articles: LiveData<Resource<List<Article>>> =
 //        MutableLiveData<Resource<List<Article>>>().apply {
 //            viewModelScope.launch {
+//                log("viewModelScope.launch")
 //                value = apiService.getArticles()
+//                log("value = $value")
 //            }
 //        }
+
+    /**
+     * Style 3: Use liveData builder
+     */
+    val articles: LiveData<Resource<List<Article>>> = liveData {
+        log("liveData")
+        emit(apiService.getArticles())
+    }
 
     /**
      * The block starts executing when the returned LiveData becomes active.
      */
     val topArticle: LiveData<Resource<Article>> = liveData {
         while (true) {
+            log("start emitting topArticle")
             emit(apiService.getTopArticle())
+            log("done emitting topArticle")
             delay(FETCH_INTERVAL)
         }
     }

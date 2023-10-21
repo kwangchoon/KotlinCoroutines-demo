@@ -11,7 +11,6 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import java.lang.RuntimeException
 
 interface UserService {
     suspend fun load(): User

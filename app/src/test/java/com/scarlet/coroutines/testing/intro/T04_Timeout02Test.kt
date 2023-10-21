@@ -2,9 +2,13 @@ package com.scarlet.coroutines.testing.intro
 
 import com.scarlet.util.log
 import com.scarlet.util.onCompletion
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.junit.Test
 
 interface Api {
@@ -19,7 +23,6 @@ private class SuspendingFakeApi : Api {
     }
 }
 
-@ExperimentalCoroutinesApi
 suspend fun loadData(api: Api): String = withTimeout(5_000) {
     api.fetch()
 }

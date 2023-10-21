@@ -17,9 +17,7 @@ class ArticleViewModel(
 
     init {
         viewModelScope.launch {
-//            log("viewModelScope.launch")
             _articles.value = apiService.getArticles()
-//            log("_articles.value = apiService.getArticles()")
         }
     }
 
