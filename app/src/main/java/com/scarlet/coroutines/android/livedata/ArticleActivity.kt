@@ -1,10 +1,7 @@
 package com.scarlet.coroutines.android.livedata
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.scarlet.R
 

@@ -32,7 +32,7 @@ fun main() = runBlocking {
         Menu.Cappuccino(CoffeeBean.Decaf, Milk.NonFat)
     ).onEach { log(it) }
 
-    val espressoMachine = EspressoMachine2(this)
+    val espressoMachine = EspressoMachine(this)
 
     val channel: ReceiveChannel<Menu.Cappuccino> = produce(CoroutineName("cashier")) {
         orders.forEach { order ->
@@ -62,7 +62,7 @@ fun main() = runBlocking {
 
 private suspend fun processOrders(
     channel: ReceiveChannel<Menu.Cappuccino>,
-    espressoMachine: EspressoMachine2
+    espressoMachine: EspressoMachine
 ) {
     channel.consumeEach { order ->
         log("Processing order: $order")
