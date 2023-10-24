@@ -11,6 +11,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -34,17 +40,20 @@ fun main() = runBlocking {
     val ordersFlow: Flow<Menu.Cappuccino> = orders.asFlow()
         .produceIn(this + CoroutineName("cashier"))
         .receiveAsFlow() // for multiple receives
-//        .consumeAsFlow() // for single receive
 
     val espressoMachine = EspressoMachine(this)
 
+    // flatMapXXX, map, flattenXXX
+    // flatMap = map andThen flatten
     val time = measureTimeMillis {
-        coroutineScope {
-            launch(CoroutineName("barista-1")) { processOrders(ordersFlow, espressoMachine) }
-                .onCompletion("barista-1")
-            launch(CoroutineName("barista-2")) { processOrders(ordersFlow, espressoMachine) }
-                .onCompletion("barista-2")
-        }
+        flowOf(
+            processOrders(ordersFlow, espressoMachine),
+            processOrders(ordersFlow, espressoMachine)
+        )  // Flow<Flow<A>> -> Flow<A>: flatten
+            .flattenMerge(2)
+            .collect { cappuccino ->
+                log("serve: $cappuccino")
+            }
     }
 
     log("time: $time ms")
@@ -55,19 +64,17 @@ fun main() = runBlocking {
 private suspend fun processOrders(
     ordersFlow: Flow<Menu.Cappuccino>,
     espressoMachine: EspressoMachine
-) {
-    ordersFlow.collect { order ->
+): Flow<Beverage.Cappuccino> = // Flow<A> -> Flow<B> : map
+    ordersFlow.map { order ->
         log("Processing order: $order")
         val groundBeans = grindCoffeeBeans(order.beans)
         coroutineScope {
             val espresso = async { espressoMachine.pullEspressoShot(groundBeans) }
             val steamedMilk = async { espressoMachine.steamMilk(order.milk) }
 
-            val cappuccino = makeCappuccino(order, espresso.await(), steamedMilk.await())
-            log("serve: $cappuccino")
+            makeCappuccino(order, espresso.await(), steamedMilk.await())
         }
     }
-}
 
 private suspend fun grindCoffeeBeans(beans: CoffeeBean): CoffeeBean.GroundBeans {
     log("grinding coffee beans")
